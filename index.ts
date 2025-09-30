@@ -28,6 +28,11 @@ function walk(dir: string) {
   return result;
 }
 
+// GET /health → health check
+app.get("/health", (c) => {
+  return c.text("OK", 200);
+});
+
 // GET /tree → return nested file tree
 app.get("/tree", (c) => {
   const tree = walk(ROOT);
@@ -51,6 +56,9 @@ app.get("/file/:path{.+}", (c) => {
   return c.json({ path: relPath, contents });
 });
 
+/*
+ * This is a test comment
+ */
 serve(app, (info) => {
   console.log(`🚀 Agent running at http://localhost:${info.port}`);
 });
