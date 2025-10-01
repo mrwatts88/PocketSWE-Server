@@ -36,7 +36,10 @@ app.get("/health", (c) => {
 // GET /tree → return nested file tree
 app.get("/tree", (c) => {
   const tree = walk(ROOT);
-  return c.json(tree);
+  return c.json({
+    root: path.basename(ROOT),
+    tree,
+  });
 });
 
 // GET /file/:path → return file contents
@@ -54,6 +57,25 @@ app.get("/file/:path{.+}", (c) => {
   }
   const contents = fs.readFileSync(fullPath, "utf-8");
   return c.json({ path: relPath, contents });
+});
+
+// POST /terminal/execute → execute terminal command
+app.post("/terminal/execute", async (c) => {
+  const { command } = await c.req.json();
+
+  // Dummy response based on command
+  let output = "";
+  if (command === "pwd") {
+    output = ROOT;
+  } else if (command === "ls") {
+    output = "index.ts\npackage.json\nignore.ts\ntest";
+  } else if (command === "whoami") {
+    output = "user";
+  } else {
+    output = `Command '${command}' executed successfully`;
+  }
+
+  return c.json({ output });
 });
 
 /*
